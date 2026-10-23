@@ -1,11 +1,35 @@
 import com.android.build.api.dsl.Packaging
 import org.gradle.api.tasks.testing.Test
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Properties
+
+abstract class CopyLiquidGlassDexAsset : DefaultTask() {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val inputDex: RegularFileProperty
+
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
+    @TaskAction
+    fun copyDex() {
+        val target = outputDirectory.file("libs/LiquidGlass.dex").get().asFile
+        target.parentFile.mkdirs()
+        inputDex.get().asFile.copyTo(target, overwrite = true)
+    }
+}
 
 plugins {
     alias(libs.plugins.androidApplication)
@@ -29,7 +53,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "github.znzsofficial.neluaj"
+        applicationId = "github.znzsofficial.neluaj.dev"
         minSdk = 26
         //noinspection OldTargetApi
         targetSdk = 33
@@ -84,6 +108,20 @@ android {
                 val apkName = "${project.name}-${defaultConfig.versionCode}-$formattedDateTime.APK"
                 output.outputFileName.set(apkName)
             }
+        }
+    }
+}
+
+val copyLiquidGlassDexAsset = tasks.register<CopyLiquidGlassDexAsset>("copyLiquidGlassDexAsset") {
+    dependsOn(":liquidglass:dexLiquidGlass")
+    inputDex.set(project(":liquidglass").layout.buildDirectory.file("bin/LiquidGlass.dex"))
+    outputDirectory.set(layout.buildDirectory.dir("generated/liquidglass-assets"))
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(copyLiquidGlassDexAsset) {
+            it.outputDirectory
         }
     }
 }

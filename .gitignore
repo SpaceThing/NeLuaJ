@@ -23,6 +23,7 @@ app/libs/mao.dex
 
 # Release build
 /app/release/
+/liquidglass/build/
 
 # macOS system files
 .DS_Store

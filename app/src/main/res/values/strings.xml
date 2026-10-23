@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">NeLuaJ+</string>
+    <string name="app_name" translatable="false">NeLuaJ+ Dev</string>
     <string name="drawer_open">Open Drawer</string>
     <string name="drawer_close">Close Drawer</string>
     <string name="accsibility_service_description">Accessibility Service</string>

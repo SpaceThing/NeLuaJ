@@ -759,13 +759,14 @@ class LuaLayout(private val initialContext: Context) {
             "radius", "cornerRadius" -> {
                 val px = values.toDimensionPx(tValue)
                 val v = view.toView()
-                if (v is MaterialCardView) {
-                    v.radius = px
-                } else if (v is MaterialButton) {
+                if (v is MaterialButton) {
                     v.cornerRadius = px.toInt()
-                } else if (!LayoutReflection.invokeFloatSetter(v, "setRadius", px)) {
+                } else if (!LayoutReflection.invokeFloatSetter(v, "setRadius", px) &&
+                    !LayoutReflection.invokeFloatSetter(v, "setCornerRadiusPx", px) &&
+                    !LayoutReflection.invokeFloatSetter(v, "setCornerRadius", px)
+                ) {
                     throw LuaError(
-                        "radius/cornerRadius 需要 MaterialCardView / MaterialButton 或 setRadius(float)，实际为 ${v.javaClass.simpleName}"
+                        "radius/cornerRadius 需要 MaterialButton 或 setRadius(float) / setCornerRadiusPx(float) / setCornerRadius(float)，实际为 ${v.javaClass.simpleName}"
                     )
                 }
                 return

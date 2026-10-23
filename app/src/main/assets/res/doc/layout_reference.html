@@ -70,7 +70,7 @@
 <div class="table-wrapper"><table><thead><tr><th>属性</th><th>说明</th><th>示例</th></tr></thead><tbody>
 <tr><td><code>elevation</code></td><td>任意 View 的 Z 高度，支持 <code>dp</code></td><td><code>"4dp"</code></td></tr>
 <tr><td><code>cardElevation</code> / <code>CardElevation</code></td><td><code>MaterialCardView</code> 卡片高度；非卡片时退化为 <code>elevation</code></td><td><code>0</code>（MD3 推荐）</td></tr>
-<tr><td><code>radius</code> / <code>cornerRadius</code></td><td><code>MaterialCardView.setRadius</code>，支持 <code>dp</code></td><td><code>"16dp"</code></td></tr>
+<tr><td><code>radius</code> / <code>cornerRadius</code></td><td>优先调用 <code>setRadius(float)</code>、<code>setCornerRadiusPx(float)</code> 或 <code>setCornerRadius(float)</code>，支持 <code>dp</code></td><td><code>"16dp"</code></td></tr>
 <tr><td><code>Checked</code> / <code>checked</code></td><td>任意 <code>android.widget.Checkable</code>（Switch、CheckBox、Chip、RadioButton、MaterialCardView…）</td><td><code>true</code></td></tr>
 <tr><td><code>checkable</code> / <code>Checkable</code></td><td>有 <code>setCheckable(boolean)</code> 的控件（Chip、MaterialCardView、MaterialButton…）；反射结果按 Class 缓存</td><td><code>true</code></td></tr>
 </tbody></table></div>

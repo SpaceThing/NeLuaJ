@@ -139,6 +139,13 @@ end
 
 local function copySelectedModules(binding, base_path, mainTpl)
   local ActivityUtil = require("mods.utils.ActivityUtil")
+  if chipChecked(binding, "module_liquidglass") then
+    local copied = LuaFileUtil.copyFile(
+      ActivityUtil.assetsRoot() .. "/libs/LiquidGlass.dex",
+      base_path .. "/libs/LiquidGlass.dex"
+    )
+    if copied == false then error("LiquidGlass.dex asset could not be copied") end
+  end
   if chipChecked(binding, "module_vconsole") then
     local body = tostring(mainTpl or "")
     if body ~= "" and not body:find("\n$") then body = body .. "\n" end

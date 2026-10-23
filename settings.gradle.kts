@@ -25,4 +25,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "NeLuaJ+"
 include(":app")
+include(":liquidglass")
 

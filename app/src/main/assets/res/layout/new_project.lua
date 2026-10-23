@@ -196,6 +196,7 @@ return {
         layout_width = "wrap",
         layout_height = "wrap",
         id = "project_module_row",
+        hChip("module_liquidglass", "LiquidGlass", true),
         hChip("module_vconsole", "vConsole", true),
         hChip("module_time", "TimeMeter", true),
         hChip("module_array", "Array", true),
