@@ -45,6 +45,14 @@ _M.isLargeScreen = function()
 end
 
 _M.initView = function()
+  -- 搜索区放在“保存文件”等功能工具栏下方。
+  pcall(function()
+    local parent = mSearch.getParent()
+    if parent and parent == appBar then
+      parent.removeView(mSearch)
+      parent.addView(mSearch, 2)
+    end
+  end)
   mSearch.setVisibility(GONE)
   mSearch.post(function()
     SearchCode()

@@ -961,8 +961,56 @@ open class LuaActivity : AppCompatActivity(), ResourceFinder, LuaContext, OnRece
         private const val NAME = "name"
         private const val MAX_LOGS = 5000
         
+        private class TimestampedLogs : ArrayList<String?>() {
+            private val timestamps = ArrayList<Long>()
+
+            override fun add(element: String?): Boolean {
+                timestamps.add(System.currentTimeMillis())
+                return super.add(element)
+            }
+
+            override fun add(index: Int, element: String?) {
+                timestamps.add(index, System.currentTimeMillis())
+                super.add(index, element)
+            }
+
+            override fun addAll(elements: Collection<String?>): Boolean {
+                if (elements.isEmpty()) return false
+                val now = System.currentTimeMillis()
+                timestamps.addAll(List(elements.size) { now })
+                return super.addAll(elements)
+            }
+
+            override fun addAll(index: Int, elements: Collection<String?>): Boolean {
+                if (elements.isEmpty()) return false
+                val now = System.currentTimeMillis()
+                timestamps.addAll(index, List(elements.size) { now })
+                return super.addAll(index, elements)
+            }
+
+            override fun removeAt(index: Int): String? {
+                timestamps.removeAt(index)
+                return super.removeAt(index)
+            }
+
+            override fun clear() {
+                timestamps.clear()
+                super.clear()
+            }
+
+            override fun set(index: Int, element: String?): String? {
+                timestamps[index] = System.currentTimeMillis()
+                return super.set(index, element)
+            }
+
+            fun timestampAt(index: Int): Long? = timestamps.getOrNull(index)
+        }
+
         @JvmField
-        var logs = ArrayList<String?>()
+        var logs: ArrayList<String?> = TimestampedLogs()
+
+        @JvmStatic
+        fun getLogTimestamp(index: Int): Long? = (logs as? TimestampedLogs)?.timestampAt(index)
         
         private fun addLog(msg: String?) {
             logs.add(msg)

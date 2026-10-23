@@ -1,6 +1,8 @@
 import "com.google.android.material.dialog.MaterialAlertDialogBuilder"
-local ArrayListAdapter = bindClass "com.androlua.adapter.ArrayListAdapter"
+local LogHistoryAdapter = bindClass "com.androlua.adapter.LogHistoryAdapter"
 local Toast = bindClass "android.widget.Toast"
+local ClipData = bindClass "android.content.ClipData"
+local ColorDrawable = bindClass "android.graphics.drawable.ColorDrawable"
 local _M = {}
 local res = res
 
@@ -129,20 +131,30 @@ function _M.showLog(context)
     return
   end
 
-  local adapter = ArrayListAdapter(context, logs)
+  local adapter = LogHistoryAdapter(context, logs)
   local dialog = MaterialAlertDialogBuilder(context)
       .setTitle(res.string.logs)
       .setAdapter(adapter, function(_, i)
-        local log = adapter.getItem(i)
+        local log = logs.get(i)
         MaterialAlertDialogBuilder(context)
             .setMessage(log)
             .setPositiveButton(android.R.string.copy, function()
-              context.getSystemService(context.CLIPBOARD_SERVICE).setText(log)
+              local clipboard = context.getSystemService(context.CLIPBOARD_SERVICE)
+              clipboard.setPrimaryClip(ClipData.newPlainText("log", tostring(log or "")))
             end)
             .setNegativeButton(android.R.string.cancel, nil)
             .show()
       end)
       .setPositiveButton(android.R.string.ok, nil)
+      .setNeutralButton(android.R.string.copy, function()
+        local lines = {}
+        for i = 0, logs.size() - 1 do
+          lines[#lines + 1] = tostring(logs.get(i) or "")
+        end
+        local clipboard = context.getSystemService(context.CLIPBOARD_SERVICE)
+        clipboard.setPrimaryClip(ClipData.newPlainText("logs", table.concat(lines, "\n\n")))
+        Toast.makeText(context, "Logs copied", Toast.LENGTH_SHORT).show()
+      end)
       .setNegativeButton(res.string.clear, function()
         logs.clear()
         Toast.makeText(context, res.string.clear, Toast.LENGTH_SHORT).show()
@@ -151,6 +163,9 @@ function _M.showLog(context)
   local listView = dialog.getListView()
   if listView then
     listView.setSelection(adapter.getCount() - 1)
+    local density = context.getResources().getDisplayMetrics().density
+    listView.setDivider(ColorDrawable(0x33808080))
+    listView.setDividerHeight(math.max(1, math.floor(8 * density + 0.5)))
   end
 end
 
